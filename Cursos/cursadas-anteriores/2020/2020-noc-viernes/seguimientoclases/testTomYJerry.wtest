@@ -1,0 +1,81 @@
+import tomYJerry.*
+
+// qué son estas cosas?
+// son TESTS AUTOMATIZADOS
+// Es OTRO programa, que se fija que ande bien nuestro programa.
+
+// Qué escenarios tenemos que probar????
+// Escenario = Clase de equivalencia
+
+
+// Los tests deben probar cosas "chiquitas"
+// Eso se llama TEST UNITARIO (por ejemplo el test que prueba la velocidad)
+// gracias a esto
+
+// Un escenario o clase de equivalencia:
+test "Si se dan ciertas condiciones tom puede atrapar" {
+}
+
+// Otro escenario o clase de equivalencia:
+test "Si no se dan las condiciones tom no deberia poder atrapar" {
+}
+
+
+
+// Acá estoy probando el método velocidad()
+test "La velocidad de tom se calcula correctamente" {
+	tom.energia(100)
+	assert.equals(15, tom.velocidad())
+}
+
+
+// cada uno de estos es un escenario
+// Acá estoy probando el método podesAtraparA
+test "Cuando la velocidad de tom es mayor a la del ratón, lo puede atrapar" {
+	// cuando arranca todo, sin hacer nada la velocidad de tom es más grande que la de jerry
+	assert.that(tom.podesAtraparA(jerry))
+}
+
+/*
+ No van, porque ya está probado en el test anterior
+ * (son parte de la misma clase de equivalencia)
+
+test "Cuando la velocidad de tom es mayor a la del ratón, lo puede atrapar" {
+	tom.energia(9999999999)
+	assert.that(tom.podesAtraparA(jerry))
+}
+
+test "Cuando la velocidad de tom es mayor a la del ratón, lo puede atrapar" {
+	tom.energia(100)
+	assert.that(tom.podesAtraparA(jerry))
+}
+ */
+// otro escenario...
+// Acá estoy probando el método podesAtraparA
+test "Cuando la velocidad de tom es menor a la del ratón no lo puede atrapar" {
+	tom.energia(10)
+	assert.notThat(tom.podesAtraparA(jerry))
+}
+
+test "La velocidad de jerry se calcula bien" {
+	assert.equals(6,jerry.velocidad())
+}
+
+test "Tom correr a Jerry" {
+	tom.correrA(jerry)
+	assert.equals(30, tom.energia())
+	assert.equals(34, tom.posicion())
+}
+
+test "Tom puede atrapar al Robot" {
+	assert.that(tom.podesAtraparA(robot))
+}
+
+
+test "Tom correr a Robot" {
+	
+	tom.correrA(robot)
+	assert.equals(30, tom.energia())
+	assert.equals(34, tom.posicion())
+}
+

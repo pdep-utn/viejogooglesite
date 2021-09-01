@@ -1,0 +1,48 @@
+"El total de pasajeros que puede transportar una formación."
+
+tren1 := Tren new.
+
+vc1 := VagonCarga new.
+vc1 pesoMaximo: 1000.
+vc1 cargaMaxima: 6666.
+
+vp1 := VagonPasajeros new.
+vp1 largo: 5.
+vp1 anchoUtil: 10.
+
+tren1 agregarVagon: vc1.
+tren1 agregarVagon: vp1.
+
+tren1 totalPasajeros.
+
+"Cuántos vagones livianos tiene una formación; un vagón es liviano si su peso máximo es menor a 2500 kg."
+tren1 cantidadVagonesLivianos.
+
+"La velocidad máxima de una formación, que es el mínimo entre las velocidades máximas de las locomotoras."
+
+castro := Locomotora new.
+castro velocidadMaxima: 12.
+castro kilosArrastre: 80000.
+castro peso: 80.
+
+chuchu := Locomotora new.
+chuchu velocidadMaxima: 6.
+chuchu kilosArrastre: 10000.
+chuchu peso: 13.
+
+tren1 agregarLocomotora: castro.
+tren1 agregarLocomotora: chuchu.
+tren1 velocidadMaxima.
+
+"Si una formación es eficiente; es eficiente si cada una de sus locomotoras arrastra, al menos, 5 veces su peso (el de la locomotora misma)."
+
+tren1 sosEficiente.
+
+"Si una formación puede moverse. Una formación puede moverse si el arrastre útil total de las locomotoras es mayor o igual al peso máximo total de los vagones. "
+
+tren1 puedeMoverse.
+
+"Cuántos kilos de empuje le faltan a una formación para poder moverse, que es: 0 si ya se puede mover, y (peso máximo total de los vagones – arrastre útil total de las locomotoras) en caso contrario."
+
+tren1 kilosEmpujeFaltante.
+

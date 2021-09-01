@@ -1,0 +1,39 @@
+import lotr.*
+
+test "aragorn puede viajar con pippin con 2 desayunos" {
+	pippin.desayunar()
+	pippin.desayunar()
+	
+	aragorn.agregarSeguidor(pippin)
+
+	assert.that(aragorn.estanListos())
+}
+
+test "aragorn no puede viajar si alguno no esta listo" {
+	aragorn.agregarSeguidor(pippin)
+	
+	assert.notThat(aragorn.estanListos())
+}
+
+test "pippin viajo bien" {
+	pippin.viajar(100)
+	
+	assert.equals(250, pippin.nivelDeHambre())
+	
+}
+
+test "Si Aragorn intenta viajar cuando no puede, debe haber un error" {
+	aragorn.agregarSeguidor(pippin)
+	
+	assert.throwsExceptionWithMessage("no estan listos para viajar", {aragorn.viajar(15)})
+	
+}
+
+test "identidad" {
+	var expected = [frodo, sam]
+	
+	aragorn.agregarSeguidor(frodo)
+	aragorn.agregarSeguidor(sam)
+	
+	assert.equals(expected, aragorn.seguidores())
+}

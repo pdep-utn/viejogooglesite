@@ -1,0 +1,28 @@
+#PibeCargador
+>> carga: unDispositivo
+	| unCargador |
+	unCargador := self encontraCargadorPara: unDispositivo.
+	self enchufa: unCargador.
+	unCargador conecta: unDispositivo.
+
+>> encontraCargadorPara: unDispositivo
+	^cargadores detect: [ :unCargador | unCargador podesCargar: unDispositivo ]
+
+>> enchufa: unCargador
+	[ enchufador enchufa: unCargador ]
+		on: EnchufeRaroError
+		do: [ :error | enchufador enchufa: (unCargador adaptadoCon: adaptador) ].
+
+
+#PibeEnchufador
+>> enchufa: unCargador
+	self valida: unCargador.
+	(enchufe estasOcupado)
+		ifTrue: [ enchufe liberate ].
+	enchufe conectar: unCargador
+
+>> valida: unCargador
+	(enchufe podesConectar: unCargador)
+		ifFalse: [ EnchufeNoCompatibleError signal. ].
+	(enchufe tenesCorriente)
+		ifFalse: [ NoHayLuzError signal. ].

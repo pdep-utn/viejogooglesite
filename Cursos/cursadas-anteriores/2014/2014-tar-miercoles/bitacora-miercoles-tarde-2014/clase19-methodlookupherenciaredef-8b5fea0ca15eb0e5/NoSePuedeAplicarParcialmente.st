@@ -1,0 +1,1 @@
+'From Pharo3.0 of 18 March 2013 [Latest update: #30763] on 11 September 2014 at 1:46:46.495772 pm'!Error subclass: #NoSePuedeAplicarParcialmente	instanceVariableNames: ''	classVariableNames: ''	poolDictionaries: ''	category: 'PdeP'!!NoSePuedeAplicarParcialmente commentStamp: '<historical>' prior: 0!!

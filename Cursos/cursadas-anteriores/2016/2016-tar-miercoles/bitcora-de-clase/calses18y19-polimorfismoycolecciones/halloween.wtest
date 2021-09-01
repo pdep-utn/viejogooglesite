@@ -1,0 +1,59 @@
+import halloween.*
+
+test "a azucena le gustan los disfraces tiernos" {
+	assert.that(azucena.leGusta(disfrazDeOso))
+	assert.notThat(azucena.leGusta(disfrazDeZombie))
+}
+
+test "a sandra le gustan los disfraces mas tiernos que terrorificos" {
+	assert.that(sandra.leGusta(disfrazDeOso))
+	assert.notThat(sandra.leGusta(disfrazDeZombie))
+}
+
+test "a jorge le gustan los disfraces terrorificos"{
+	assert.that(jorge.leGusta(disfrazDeZombie))
+	assert.notThat(jorge.leGusta(disfrazDeOso))
+}
+
+test "a quienes de la casa les gusta el disfraz de oso"{
+	assert.equals(#{sandra, azucena}, 
+		casa.aQuienesLesGusta(disfrazDeOso).asSet()
+	)
+}
+
+test "cuantos caramelos podría conseguir juanita con una casa ordenada y abundante"{
+	assert.equals(22,
+		juanita.cuantosCaramelosPuedeConseguirEn(casa)
+		)
+}
+
+test "cuantos caramelos podría conseguir juanita con una casa caotica y escasa" {
+	casa.caos(4)
+	casa.cantidadDeCaramelos(30)
+	assert.equals(10,
+		juanita.cuantosCaramelosPuedeConseguirEn(casa)
+		)
+}
+
+test "cuantos caramelos podría conseguir rolo" {
+	assert.equals(1,
+		rolo.cuantosCaramelosPuedeConseguirEn(casa)
+		)
+}
+
+test "cuantos caramelos puede conseguir tito vestido igual que la hermana"{
+	const caramelosQueConsigueJuanita 
+		= juanita.cuantosCaramelosPuedeConseguirEn(casa)
+	const caramelosQueConsigueTito 
+		= tito.cuantosCaramelosPuedeConseguirEn(casa)
+	assert.equals(caramelosQueConsigueJuanita,
+		caramelosQueConsigueTito
+	)
+}
+
+test "cuantos caramelos puede conseguir tito vestido distinto que la hermana"{
+	tito.disfraz(disfrazDeOso)
+	const caramelosQueConsigueTito 
+		= tito.cuantosCaramelosPuedeConseguirEn(casa)
+	assert.equals(12, caramelosQueConsigueTito)
+}

@@ -1,0 +1,140 @@
+1. El costo total del cultivo de una parcela determinada (costo x hectárea por tamaño de la parcela).
+ 
+>>Parcela (VI: hectareasCultivadas, totalHectareas, costo, cultivo, cantidadEnSilo)
+costoTotal
+   ^cultivo costoXHectareaSegun: self
+ 
+>>Cultivo
+costoXHectareaSegun: unaParcela
+   ^(self costoBaseXHectareaPara: unaParcela) * unaParcela hectareasCultivadas
+ 
+>>Soja hereda de Cultivo
+costoBaseXHectareaPara: unaParcela
+   ^10
+ 
+>>SojaTransgenica hereda de Soja, no define costo
+ 
+>>Trigo  
+costoXHectareaSegun: unaParcela
+   ^(super costoXHectareaSegun: unaParcela) min: 500
+ 
+>>Sorgo
+costoBaseXHectareaPara: unaParcela
+   ^(unaParcela cantidadCultivada < 50)
+       ifTrue: [ 3 ]
+       ifFalse: [ 2 ]
+ 
+2. El precio de venta del cultivo de una parcela determinada (precio venta x hectárea por cantidad
+a vender, siempre que no exceda la cantidad cultivada de la parcela). 
+ 
+>>Soja    
+precioVentaDe: unaParcela 
+    | precioBase |
+    precioBase := unaParcela costoTotal * 10.
+    (unaParcela totalHectareas > 1000)
+        ifTrue: [ precioBase := precioBase * 0.9 ].
+    ^precioBase
+    
+>>SojaTransgenica (VI: puedeOcasionarMutaciones)
+precioVentaDe: unaParcela 
+    | precioBase |
+    precioBase := super precioVentaDe: unaParcela.
+    puedeOcasionarMutaciones
+        ifTrue: [ precioBase := precioBase * 0.5 ].
+    ^precioBase
+    
+>>Trigo (VI: conservantes)    
+precioVentaDe: unaParcela 
+    ^20 * self precioConservantes
+    
+precioConservantes
+    ^conservantes inject: 0 into: [ :acum :conservante | acum + conservante costo ]
+    
+>>Sorgo
+precioVentaDe: unaParcela 
+    ^20
+    
+3. El monto de una venta.    
+>>Venta (VI: cantidadAVender, cultivo, comprador)
+montoPara: unaParcela
+   ^(cultivo precioVentaDe: unaParcela) * cantidadAVender * (comprador coeficienteAjustePara: self)
+   
+>>CompradorNacional
+coeficienteAjustePara: unaVenta
+   ^(unaVenta cantidadAVender > 500)
+       ifTrue: [ 1.1 ]
+       ifFalse: [ 1 ]
+       
+>>CompradorExtranjero  (VC: CoeficienteAjuste)
+coeficienteAjustePara: unaVenta
+    ^CoeficienteAjuste
+    
+>>CompradorEspecial (VI: cultivosSinRecargo)       
+coeficienteAjustePara: unaVenta
+   ^(cultivosSinRecargo includes: unaVenta cultivo)
+       ifTrue: [ 1.05 ]
+       ifFalse: [ 1 ]
+
+Se puede mejorar delegando:
+a) la pregunta a hacer
+b) el monto por recargo
+pero lo dejamos acá
+
+4. Cuáles son los cultivos de un agricultor, sin repetidos.
+>>Agricultor (VI: parcelas)
+cultivos
+    ^(parcelas collect: [ :parcela | parcela cultivo ]) asSet
+
+5. La facturación de una parcela en un rango de fechas
+>>Parcela (VI: ventas)
+facturacionDesde: unaFecha hasta: otraFecha
+    ^(self ventasDesde: unaFecha hasta: otraFecha)
+     inject: 0 into: [ :acum :venta | acum + venta montoPara: self ]
+    
+ventasDesde: unaFecha hasta: otraFecha    
+    ^ventas select: [ :venta | venta seRealizoEntre: unaFecha y: otraFecha ]
+    
+>>Venta   
+seRealizoEntre: unaFecha y: otraFecha
+    ^fecha between: unaFecha and: otraFecha
+    
+6. Cuál fue la parcela que más facturó en un rango de fechas.    
+>>Agricultor
+parcelaConMasFacturacionEntre: unaFecha y: otraFecha
+    ^(parcelas asSortedCollection: [ :parcela1 :parcela2 |
+        (parcela1 facturacionDesde: unaFecha hasta: otraFecha) >
+        (parcela2 facturacionDesde: unaFecha hasta: otraFecha) ]) first
+        
+7. Saber si un agricultor tiene alguna parcela subutilizada 
+>>Agricultor
+tieneAlgunaParcelaSubutilizada
+   ^parcelas anySatisfy: [ :parcela | parcela estaSubutilizada ]
+   
+>>Parcela
+estaSubutilizada
+   ^(hectareasCultivadas / totalHectareas) < 0.5
+   
+8. Registrar una venta de la cantidad de kilos de un cultivo para una parcela a un comprador x   
+>>Parcela
+vender: unaCantidad a: unComprador
+    (cantidadEnSilo < unaCantidad)    
+        ifTrue: [ self error: 'No hay suficiente cantidad en el silo' ].
+    ventas add: (Venta new
+                          fecha: Date today;
+                          cantidadAVender: unaCantidad;
+                          cultivo: cultivo;
+                          comprador: unComprador).
+    cantidadEnSilo := cantidadEnSilo - unaCantidad.
+    
+9. Plantar en una parcela una cantidad de hectáreas de un cultivo nuevo.
+>>Agricultor
+cosechar
+   parcelas do: [ :parcela | parcela cosechar ]
+   
+>>Parcela
+cosechar
+   cantidadEnSilo := cantidadEnSilo + cultivo cantidadKilosAObtener.
+   hectareasCultivadas := 0.
+   
+
+ 
